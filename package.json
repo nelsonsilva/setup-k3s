@@ -1,6 +1,6 @@
 {
   "name": "setup-k3s",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "K3s GitHub Action",
   "main": "src/main.ts",
