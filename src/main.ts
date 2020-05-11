@@ -1,19 +1,16 @@
-import * as core from '@actions/core'
-import {wait} from './wait'
+import {setFailed} from '@actions/core'
+import {exec} from '@actions/exec'
 
-async function run(): Promise<void> {
-  try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`)
+const sh = `
+curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644;
+mkdir ~/.kube && cp /etc/rancher/k3s/k3s.yaml ~/.kube/config;
+`;
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    core.setOutput('time', new Date().toTimeString())
-  } catch (error) {
-    core.setFailed(error.message)
+try {
+  if (process.platform !== 'linux') {
+    throw new Error('Only Linux supported for now')
   }
+  exec('bash', ['-c', sh])
+} catch (error) {
+  setFailed(error.message)
 }
-
-run()
